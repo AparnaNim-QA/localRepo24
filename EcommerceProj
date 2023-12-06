@@ -1,0 +1,66 @@
+package baseClass;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.Properties;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
+
+public class BaseTest
+{
+  //in base class setup and teardown is common throughout the testing
+	//create two methods setup and teardown
+	public static WebDriver driver;
+	public static Properties pr=new Properties();
+	public static Properties loc=new Properties();
+	public static FileReader fr;
+	
+	@BeforeTest
+	public static void setUp() throws Exception
+	{
+		if(driver==null)
+		{
+			//insted of giving this long path
+			//we use system.getproperty(user.dir)
+			System.out.println("The path is: "+ System.getProperty("user.dir"));
+			//FileReader fr=new FileReader("C:\\Users\\Aparna\\eclipse-workspace\\TestAutomationFramework\\src\\test\\resources\\configfiles\\config.properties");
+			
+			FileReader fr=new FileReader(System.getProperty("user.dir")+"\\src\\test\\resources\\configfiles\\config.properties");
+			FileReader fr1=new FileReader(System.getProperty("user.dir")+"\\src\\test\\resources\\configfiles\\Locators.properties");
+			pr.load(fr);
+			loc.load(fr1);
+		}
+		if(pr.getProperty("browser").equalsIgnoreCase("chrome"))
+		{
+			WebDriverManager.chromedriver().setup();
+	        driver=new ChromeDriver();
+	       // driver.get("https://www.saucedemo.com/v1/");
+	        driver.get(pr.getProperty("testurl"));//from properties
+			
+		}
+		else if(pr.getProperty("browser").equalsIgnoreCase("firefox"))
+		{
+			WebDriverManager.firefoxdriver().setup();
+	        driver=new FirefoxDriver();
+	        driver.get(pr.getProperty("testurl"));
+		}
+		
+		
+	}
+	
+	/*@AfterTest
+	public static void tearDown()
+	{
+		
+		driver.close();
+		System.out.println("teardown successfully");
+		
+	}*/
+	
+}
